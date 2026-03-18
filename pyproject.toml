@@ -32,6 +32,7 @@ dependencies = [
     "rasters",
     "SEBAL-soil-heat-flux",
     "shapely",
+    "statsmodels",
     "STIC-JPL",
     "verma-net-radiation"
 ]
