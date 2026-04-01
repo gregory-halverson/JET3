@@ -199,6 +199,33 @@ def JET(
     if GEOS5FP_connection is None:
         GEOS5FP_connection = GEOS5FPConnection()
     
+    # Sharpen soil moisture if enabled
+    if sharpen_soil_moisture:
+        try:
+            SM = sharpen_soil_moisture_data(
+                ST_C=ST_C,
+                NDVI=NDVI,
+                albedo=albedo,
+                water_mask=water_mask,
+                geometry=geometry,
+                coarse_geometry=coarse_geometry,
+                time_UTC=time_UTC,
+                date_UTC=date_UTC,
+                tile=tile,
+                orbit=orbit,
+                scene=scene,
+                upsampling=upsampling,
+                downsampling=downsampling,
+                GEOS5FP_connection=GEOS5FP_connection
+            )
+        except Exception as e:
+            logger.error(e)
+            logger.warning("unable to sharpen soil moisture")
+            SM = GEOS5FP_connection.SM(time_UTC=time_UTC, geometry=geometry, resampling=downsampling)
+    else:
+        SM = GEOS5FP_connection.SM(time_UTC=time_UTC, geometry=geometry, resampling=downsampling)
+
+
     # Dynamically retrieve missing optional parameters needed for UQ and models
     if SZA_deg is None:
         logger.info("retrieving solar zenith angle")
