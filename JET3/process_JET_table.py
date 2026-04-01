@@ -33,7 +33,9 @@ def process_JET_table(
         Rn_model_name: str = "verma",
         downsampling: str = "average",
         offline_mode: bool = False,
-        include_water_surface: bool = False
+        include_water_surface: bool = False,
+        generate_UQ: bool = False,
+        use_calibration: bool = False
         ) -> DataFrame:
     """
     Processes an input DataFrame to prepare all required variables for the JET model ensemble,
@@ -280,7 +282,9 @@ def process_JET_table(
         Rn_model_name=Rn_model_name,
         downsampling=downsampling,
         offline_mode=offline_mode,
-        include_water_surface=include_water_surface
+        include_water_surface=include_water_surface,
+        generate_UQ=generate_UQ,
+        use_calibration=use_calibration
     )
 
     output_df = input_df.copy()

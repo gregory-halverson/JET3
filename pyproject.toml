@@ -30,6 +30,7 @@ dependencies = [
     "python-dateutil",
     "pytictoc",
     "rasters",
+    "scikit-learn",
     "SEBAL-soil-heat-flux",
     "shapely",
     "statsmodels",
