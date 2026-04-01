@@ -102,7 +102,8 @@ def JET(
         offline_mode: bool = False,
         include_water_surface: bool = True,
         generate_UQ: bool = False,
-        use_calibration: bool = False) -> Dict[str, Union[Raster, np.ndarray]]:
+        use_calibration: bool = False,
+        sharpen_soil_moisture: bool = SHARPEN_SOIL_MOISTURE) -> Dict[str, Union[Raster, np.ndarray]]:
     """
     Main science function for JET (JPL Evapotranspiration Ensemble).
     
@@ -199,6 +200,34 @@ def JET(
     if GEOS5FP_connection is None:
         GEOS5FP_connection = GEOS5FPConnection()
     
+    # Sharpen soil moisture if enabled
+    if soil_moisture is None:
+        if sharpen_soil_moisture:
+            try:
+                soil_moisture = sharpen_soil_moisture_data(
+                    ST_C=ST_C,
+                    NDVI=NDVI,
+                    albedo=albedo,
+                    water_mask=water_mask,
+                    geometry=geometry,
+                    coarse_geometry=coarse_geometry,
+                    time_UTC=time_UTC,
+                    date_UTC=date_UTC,
+                    tile=tile,
+                    orbit=orbit,
+                    scene=scene,
+                    upsampling=upsampling,
+                    downsampling=downsampling,
+                    GEOS5FP_connection=GEOS5FP_connection
+                )
+            except Exception as e:
+                logger.error(e)
+                logger.warning("unable to sharpen soil moisture")
+                soil_moisture = GEOS5FP_connection.SM(time_UTC=time_UTC, geometry=geometry, resampling=downsampling)
+        else:
+            soil_moisture = GEOS5FP_connection.SM(time_UTC=time_UTC, geometry=geometry, resampling=downsampling)
+
+
     # Dynamically retrieve missing optional parameters needed for UQ and models
     if SZA_deg is None:
         logger.info("retrieving solar zenith angle")
